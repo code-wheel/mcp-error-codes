@@ -163,14 +163,24 @@ final class ErrorCode {
   // =========================================================================
 
   /**
+   * Cached list of all error code constants.
+   *
+   * @var array<string, string>|null
+   */
+  private static ?array $cachedCodes = null;
+
+  /**
    * Get all defined error codes.
    *
    * @return array<string, string>
    *   Map of constant names to values.
    */
   public static function all(): array {
-    $reflection = new \ReflectionClass(self::class);
-    return $reflection->getConstants();
+    if (self::$cachedCodes === null) {
+      $reflection = new \ReflectionClass(self::class);
+      self::$cachedCodes = $reflection->getConstants();
+    }
+    return self::$cachedCodes;
   }
 
   /**

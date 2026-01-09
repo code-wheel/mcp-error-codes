@@ -148,4 +148,12 @@ final class ErrorCodeTest extends TestCase {
     $this->assertSame('RATE_LIMIT_EXCEEDED', ErrorCode::RATE_LIMIT_EXCEEDED);
   }
 
+  public function testAllIsCached(): void {
+    $first = ErrorCode::all();
+    $second = ErrorCode::all();
+
+    // Same array reference due to caching
+    $this->assertSame($first, $second);
+  }
+
 }
