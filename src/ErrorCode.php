@@ -42,6 +42,11 @@ final class ErrorCode {
    */
   public const RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED';
 
+  /**
+   * Site/system is in read-only mode.
+   */
+  public const READ_ONLY_MODE = 'READ_ONLY_MODE';
+
   // =========================================================================
   // Resource Errors
   // =========================================================================
@@ -65,6 +70,11 @@ final class ErrorCode {
    * Entity is protected and cannot be modified.
    */
   public const ENTITY_PROTECTED = 'ENTITY_PROTECTED';
+
+  /**
+   * Required dependency (module, service) is missing.
+   */
+  public const MISSING_DEPENDENCY = 'MISSING_DEPENDENCY';
 
   // =========================================================================
   // Validation Errors
@@ -118,6 +128,21 @@ final class ErrorCode {
    * User confirmation required before destructive operation.
    */
   public const CONFIRMATION_REQUIRED = 'CONFIRMATION_REQUIRED';
+
+  /**
+   * Tool not found or invalid.
+   */
+  public const INVALID_TOOL = 'INVALID_TOOL';
+
+  /**
+   * Tool execution failed.
+   */
+  public const EXECUTION_FAILED = 'EXECUTION_FAILED';
+
+  /**
+   * Tool instantiation failed.
+   */
+  public const INSTANTIATION_FAILED = 'INSTANTIATION_FAILED';
 
   // =========================================================================
   // Domain-Specific Errors (extend as needed)
@@ -210,12 +235,14 @@ final class ErrorCode {
       self::INSUFFICIENT_SCOPE,
       self::ADMIN_REQUIRED,
       self::ACCESS_DENIED,
-      self::RATE_LIMIT_EXCEEDED => 'access',
+      self::RATE_LIMIT_EXCEEDED,
+      self::READ_ONLY_MODE => 'access',
 
       self::NOT_FOUND,
       self::ALREADY_EXISTS,
       self::ENTITY_IN_USE,
-      self::ENTITY_PROTECTED => 'resource',
+      self::ENTITY_PROTECTED,
+      self::MISSING_DEPENDENCY => 'resource',
 
       self::VALIDATION_ERROR,
       self::INVALID_NAME,
@@ -226,7 +253,10 @@ final class ErrorCode {
       self::INTERNAL_ERROR,
       self::OPERATION_FAILED,
       self::TIMEOUT,
-      self::CONFIRMATION_REQUIRED => 'operation',
+      self::CONFIRMATION_REQUIRED,
+      self::INVALID_TOOL,
+      self::EXECUTION_FAILED,
+      self::INSTANTIATION_FAILED => 'operation',
 
       default => 'domain',
     };
@@ -263,7 +293,8 @@ final class ErrorCode {
     return match ($code) {
       self::INSUFFICIENT_SCOPE,
       self::ADMIN_REQUIRED,
-      self::ACCESS_DENIED => 403,
+      self::ACCESS_DENIED,
+      self::READ_ONLY_MODE => 403,
 
       self::RATE_LIMIT_EXCEEDED => 429,
 
@@ -277,7 +308,8 @@ final class ErrorCode {
       self::VALIDATION_ERROR,
       self::INVALID_NAME,
       self::INVALID_FILE_TYPE,
-      self::MISSING_REQUIRED => 400,
+      self::MISSING_REQUIRED,
+      self::INVALID_TOOL => 400,
 
       self::PAYLOAD_TOO_LARGE => 413,
 
