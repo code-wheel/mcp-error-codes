@@ -1,6 +1,14 @@
 # MCP Error Codes
 
+[![CI](https://github.com/code-wheel/mcp-error-codes/actions/workflows/ci.yml/badge.svg)](https://github.com/code-wheel/mcp-error-codes/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/code-wheel/mcp-error-codes/graph/badge.svg)](https://codecov.io/gh/code-wheel/mcp-error-codes)
+[![Latest Stable Version](https://poser.pugx.org/code-wheel/mcp-error-codes/v)](https://packagist.org/packages/code-wheel/mcp-error-codes)
+[![PHP Version](https://img.shields.io/packagist/php-v/code-wheel/mcp-error-codes.svg)](https://packagist.org/packages/code-wheel/mcp-error-codes)
+[![License](https://poser.pugx.org/code-wheel/mcp-error-codes/license)](https://packagist.org/packages/code-wheel/mcp-error-codes)
+
 Standardized error codes for MCP (Model Context Protocol) servers in PHP.
+
+**Zero dependencies** - pure PHP 8.1+.
 
 ## Installation
 
