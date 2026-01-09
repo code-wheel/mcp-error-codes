@@ -67,10 +67,14 @@ final class ErrorCodeTest extends TestCase {
       [ErrorCode::TIMEOUT, 'operation'],
       [ErrorCode::CONFIRMATION_REQUIRED, 'operation'],
 
-      // Domain category (default)
+      // Domain category (all domain-specific codes)
       [ErrorCode::TEMPLATE_NOT_FOUND, 'domain'],
       [ErrorCode::CRON_FAILED, 'domain'],
       [ErrorCode::MIGRATION_FAILED, 'domain'],
+      [ErrorCode::RECIPE_FAILED, 'domain'],
+      [ErrorCode::CONFIG_ERROR, 'domain'],
+      [ErrorCode::MEDIA_ERROR, 'domain'],
+      [ErrorCode::SERVICE_UNAVAILABLE, 'domain'],
     ];
   }
 
@@ -131,9 +135,15 @@ final class ErrorCodeTest extends TestCase {
       // 503 Service Unavailable
       [ErrorCode::SERVICE_UNAVAILABLE, 503],
 
-      // 500 Internal Server Error (default)
+      // 500 Internal Server Error (default for operation/domain codes)
       [ErrorCode::INTERNAL_ERROR, 500],
       [ErrorCode::OPERATION_FAILED, 500],
+      [ErrorCode::CONFIRMATION_REQUIRED, 500],
+      [ErrorCode::CRON_FAILED, 500],
+      [ErrorCode::MIGRATION_FAILED, 500],
+      [ErrorCode::RECIPE_FAILED, 500],
+      [ErrorCode::CONFIG_ERROR, 500],
+      [ErrorCode::MEDIA_ERROR, 500],
     ];
   }
 
