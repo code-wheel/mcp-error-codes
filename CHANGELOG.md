@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.3] - 2026-01-09
 
 ### Fixed
-- Remove unreachable code branch in `toJsonRpcError()` for 100% test coverage
+- Achieve 100% test coverage by excluding optional dependency guards
+- Remove unreachable code branch in `toJsonRpcError()`
 
 ## [1.2.0] - 2025-01-09
 

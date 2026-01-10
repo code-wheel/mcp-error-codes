@@ -244,11 +244,13 @@ final class ErrorBag implements \Countable, \IteratorAggregate
      */
     public function toCallToolResult(): object
     {
+        // @codeCoverageIgnoreStart
         if (!class_exists(\Mcp\Schema\Result\CallToolResult::class)) {
             throw new \RuntimeException(
                 'mcp/sdk package is required for toCallToolResult(). Install with: composer require mcp/sdk'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         if (empty($this->errors)) {
             return new \Mcp\Schema\Result\CallToolResult(
@@ -272,11 +274,13 @@ final class ErrorBag implements \Countable, \IteratorAggregate
      */
     public function toJsonRpcError(): object
     {
+        // @codeCoverageIgnoreStart
         if (!class_exists(\Mcp\Schema\JsonRpc\Error::class)) {
             throw new \RuntimeException(
                 'mcp/sdk package is required for toJsonRpcError(). Install with: composer require mcp/sdk'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         if (empty($this->errors)) {
             throw new \RuntimeException('Cannot convert empty ErrorBag to JsonRpcError');

@@ -352,11 +352,13 @@ final class McpError
      */
     public function toCallToolResult(): object
     {
+        // @codeCoverageIgnoreStart
         if (!class_exists(\Mcp\Schema\Result\CallToolResult::class)) {
             throw new \RuntimeException(
                 'mcp/sdk package is required for toCallToolResult(). Install with: composer require mcp/sdk'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         $content = [new \Mcp\Schema\Content\TextContent($this->getMessage())];
         $structured = $this->toArray();
@@ -374,11 +376,13 @@ final class McpError
      */
     public function toJsonRpcError(): object
     {
+        // @codeCoverageIgnoreStart
         if (!class_exists(\Mcp\Schema\JsonRpc\Error::class)) {
             throw new \RuntimeException(
                 'mcp/sdk package is required for toJsonRpcError(). Install with: composer require mcp/sdk'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         $data = $this->toArray();
         unset($data['success'], $data['error']);
