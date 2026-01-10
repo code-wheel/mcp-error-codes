@@ -287,7 +287,7 @@ final class ErrorBag implements \Countable, \IteratorAggregate
         unset($data['success'], $data['error']);
 
         return new \Mcp\Schema\JsonRpc\Error(
-            null, // JSON-RPC request ID (null for notifications/errors)
+            0, // JSON-RPC request ID (0 as placeholder when ID unknown)
             $primary->getJsonRpcCode(),
             $this->getSummaryMessage(),
             $data
