@@ -383,11 +383,12 @@ final class McpError
         $data = $this->toArray();
         unset($data['success'], $data['error']);
 
+        // $data always contains at least 'code', so pass directly
         return new \Mcp\Schema\JsonRpc\Error(
             0, // JSON-RPC request ID (0 as placeholder when ID unknown)
             $this->getJsonRpcCode(),
             $this->getMessage(),
-            empty($data) ? null : $data
+            $data
         );
     }
 }
