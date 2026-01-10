@@ -76,5 +76,5 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: PHP Syntax Check
-        run: find src tests -name "*.php" -print0 | xargs -0 -n1 php -l
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse src --level=8
