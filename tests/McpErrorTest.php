@@ -190,4 +190,134 @@ final class McpErrorTest extends TestCase
         $this->assertSame(ErrorCode::MISSING_DEPENDENCY, $error->getCode());
         $this->assertSame('search_api', $error->getDetails()['dependency']);
     }
+
+    public function testAccessDeniedWithoutReason(): void
+    {
+        $error = McpError::accessDenied('create');
+
+        $this->assertSame(ErrorCode::ACCESS_DENIED, $error->getCode());
+        $this->assertStringContainsString('create', $error->getMessage());
+        $this->assertSame('create', $error->getDetails()['operation']);
+    }
+
+    public function testInsufficientScopeWithNoScopes(): void
+    {
+        $error = McpError::insufficientScope('admin', []);
+
+        $this->assertSame(ErrorCode::INSUFFICIENT_SCOPE, $error->getCode());
+        $this->assertStringContainsString('none', $error->getMessage());
+        $this->assertSame([], $error->getDetails()['current_scopes']);
+    }
+
+    public function testReadOnlyWithoutConfigPath(): void
+    {
+        $error = McpError::readOnly();
+
+        $this->assertSame(ErrorCode::READ_ONLY_MODE, $error->getCode());
+        $this->assertStringContainsString('read-only mode', $error->getMessage());
+    }
+
+    public function testEntityInUseWithoutForce(): void
+    {
+        $error = McpError::entityInUse('taxonomy', 'tags', 10, false);
+
+        $this->assertSame(ErrorCode::ENTITY_IN_USE, $error->getCode());
+        $this->assertFalse($error->getDetails()['force_available']);
+        $this->assertStringNotContainsString('force=true', $error->getMessage());
+    }
+
+    public function testFromExceptionWithoutContext(): void
+    {
+        $exception = new \InvalidArgumentException('Invalid value');
+        $error = McpError::fromException($exception);
+
+        $this->assertSame(ErrorCode::INTERNAL_ERROR, $error->getCode());
+        $this->assertSame('Invalid value', $error->getMessage());
+        $this->assertSame('InvalidArgumentException', $error->getDetails()['exception']);
+    }
+
+    public function testGetRawMessage(): void
+    {
+        $error = McpError::notFound('user', '123')
+            ->withSuggestion('Check the ID');
+
+        // getMessage includes suggestion, getRawMessage does not
+        $this->assertStringContainsString('Check the ID', $error->getMessage());
+        $this->assertStringNotContainsString('Check the ID', $error->getRawMessage());
+    }
+
+    public function testWithContextMerges(): void
+    {
+        $error = McpError::internal('Error')
+            ->withContext(['key1' => 'value1'])
+            ->withContext(['key2' => 'value2']);
+
+        $context = $error->getContext();
+        $this->assertSame('value1', $context['key1']);
+        $this->assertSame('value2', $context['key2']);
+    }
+
+    public function testInternalFactory(): void
+    {
+        $error = McpError::internal('Something went wrong');
+
+        $this->assertSame(ErrorCode::INTERNAL_ERROR, $error->getCode());
+        $this->assertSame('Something went wrong', $error->getMessage());
+    }
+
+    public function testToArrayWithoutDetails(): void
+    {
+        $error = McpError::custom('CUSTOM', 'Simple error');
+        $array = $error->toArray();
+
+        $this->assertFalse($array['success']);
+        $this->assertSame('CUSTOM', $array['code']);
+        $this->assertArrayNotHasKey('details', $array);
+        $this->assertArrayNotHasKey('retry_after', $array);
+    }
+
+    public function testRetryAfterBuilder(): void
+    {
+        $error = McpError::custom('TIMEOUT', 'Request timed out')
+            ->retryAfter(120);
+
+        $this->assertSame(120, $error->getRetryAfter());
+        $this->assertSame(120, $error->toArray()['retry_after']);
+    }
+
+    public function testToCallToolResultThrowsWhenPackageNotInstalled(): void
+    {
+        $error = McpError::validation('field', 'error');
+
+        try {
+            $result = $error->toCallToolResult();
+            // If mcp/sdk is installed, verify it returns correct type
+            $this->assertSame('Mcp\\Schema\\Result\\CallToolResult', get_class($result));
+        } catch (\RuntimeException $e) {
+            // If not installed, verify correct error message
+            $this->assertStringContainsString('mcp/sdk', $e->getMessage());
+        }
+    }
+
+    public function testToJsonRpcErrorThrowsWhenPackageNotInstalled(): void
+    {
+        $error = McpError::notFound('user', '123');
+
+        try {
+            $result = $error->toJsonRpcError();
+            // If mcp/sdk is installed, verify it returns correct type
+            $this->assertSame('Mcp\\Schema\\JsonRpc\\Error', get_class($result));
+        } catch (\RuntimeException $e) {
+            // If not installed, verify correct error message
+            $this->assertStringContainsString('mcp/sdk', $e->getMessage());
+        }
+    }
+
+    public function testCustomFactory(): void
+    {
+        $error = McpError::custom('MY_CODE', 'My custom message');
+
+        $this->assertSame('MY_CODE', $error->getCode());
+        $this->assertSame('My custom message', $error->getMessage());
+    }
 }

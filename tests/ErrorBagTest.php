@@ -201,4 +201,81 @@ final class ErrorBagTest extends TestCase
         $this->assertSame($error1, $all[0]);
         $this->assertSame($error2, $all[1]);
     }
+
+    public function testGetSummaryMessageEmpty(): void
+    {
+        $bag = new ErrorBag();
+
+        $this->assertSame('No errors', $bag->getSummaryMessage());
+    }
+
+    public function testFluentInterface(): void
+    {
+        $bag = new ErrorBag();
+
+        $result = $bag->add(McpError::validation('a', 'b'));
+        $this->assertSame($bag, $result);
+
+        $result = $bag->addValidation('c', 'd');
+        $this->assertSame($bag, $result);
+
+        $result = $bag->merge(new ErrorBag());
+        $this->assertSame($bag, $result);
+
+        $result = $bag->clear();
+        $this->assertSame($bag, $result);
+    }
+
+    public function testToCallToolResultThrowsWhenPackageNotInstalled(): void
+    {
+        $bag = new ErrorBag();
+        $bag->add(McpError::validation('field', 'error'));
+
+        try {
+            $result = $bag->toCallToolResult();
+            // If mcp/sdk is installed, verify it works
+            $this->assertSame('Mcp\Schema\Result\CallToolResult', get_class($result));
+        } catch (\RuntimeException $e) {
+            // If not installed, verify correct error
+            $this->assertStringContainsString('mcp/sdk', $e->getMessage());
+        }
+    }
+
+    public function testToCallToolResultEmpty(): void
+    {
+        $bag = new ErrorBag();
+
+        try {
+            $result = $bag->toCallToolResult();
+            $this->assertFalse($result->isError);
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('mcp/sdk', $e->getMessage());
+        }
+    }
+
+    public function testToJsonRpcErrorThrowsWhenPackageNotInstalled(): void
+    {
+        $bag = new ErrorBag();
+        $bag->add(McpError::validation('field', 'error'));
+
+        try {
+            $result = $bag->toJsonRpcError();
+            $this->assertSame('Mcp\Schema\JsonRpc\Error', get_class($result));
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('mcp/sdk', $e->getMessage());
+        }
+    }
+
+    public function testToJsonRpcErrorThrowsWhenEmpty(): void
+    {
+        $bag = new ErrorBag();
+
+        try {
+            $bag->toJsonRpcError();
+            $this->fail('Expected exception for empty bag');
+        } catch (\RuntimeException $e) {
+            // Could be either "mcp/sdk not installed" or "empty bag" error
+            $this->assertInstanceOf(\RuntimeException::class, $e);
+        }
+    }
 }
