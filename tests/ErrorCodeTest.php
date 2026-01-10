@@ -166,4 +166,108 @@ final class ErrorCodeTest extends TestCase {
     $this->assertSame($first, $second);
   }
 
+  #[\PHPUnit\Framework\Attributes\DataProvider('jsonRpcCodeProvider')]
+  public function testGetJsonRpcCodeReturnsCorrectCode(string $code, int $expectedCode): void {
+    $this->assertSame($expectedCode, ErrorCode::getJsonRpcCode($code));
+  }
+
+  public static function jsonRpcCodeProvider(): array {
+    return [
+      // -32602 Invalid params
+      [ErrorCode::VALIDATION_ERROR, -32602],
+      [ErrorCode::INVALID_NAME, -32602],
+      [ErrorCode::INVALID_FILE_TYPE, -32602],
+      [ErrorCode::MISSING_REQUIRED, -32602],
+
+      // -32601 Method not found
+      [ErrorCode::INVALID_TOOL, -32601],
+
+      // -32603 Internal error
+      [ErrorCode::INTERNAL_ERROR, -32603],
+      [ErrorCode::EXECUTION_FAILED, -32603],
+      [ErrorCode::INSTANTIATION_FAILED, -32603],
+
+      // -32001 Access denied
+      [ErrorCode::ACCESS_DENIED, -32001],
+      [ErrorCode::INSUFFICIENT_SCOPE, -32001],
+      [ErrorCode::ADMIN_REQUIRED, -32001],
+
+      // -32002 Not found
+      [ErrorCode::NOT_FOUND, -32002],
+      [ErrorCode::TEMPLATE_NOT_FOUND, -32002],
+
+      // -32003 Rate limited
+      [ErrorCode::RATE_LIMIT_EXCEEDED, -32003],
+
+      // -32004 Read-only
+      [ErrorCode::READ_ONLY_MODE, -32004],
+
+      // -32005 Conflict
+      [ErrorCode::ALREADY_EXISTS, -32005],
+      [ErrorCode::ENTITY_IN_USE, -32005],
+      [ErrorCode::ENTITY_PROTECTED, -32005],
+
+      // -32006 Missing dependency
+      [ErrorCode::MISSING_DEPENDENCY, -32006],
+
+      // -32007 Timeout
+      [ErrorCode::TIMEOUT, -32007],
+
+      // -32008 Service unavailable
+      [ErrorCode::SERVICE_UNAVAILABLE, -32008],
+
+      // -32009 Payload too large
+      [ErrorCode::PAYLOAD_TOO_LARGE, -32009],
+
+      // -32010 Confirmation required
+      [ErrorCode::CONFIRMATION_REQUIRED, -32010],
+
+      // -32011 Operation failed
+      [ErrorCode::OPERATION_FAILED, -32011],
+      [ErrorCode::CRON_FAILED, -32011],
+      [ErrorCode::MIGRATION_FAILED, -32011],
+      [ErrorCode::RECIPE_FAILED, -32011],
+      [ErrorCode::CONFIG_ERROR, -32011],
+      [ErrorCode::MEDIA_ERROR, -32011],
+    ];
+  }
+
+  public function testGetJsonRpcCodeReturnsDefaultForUnknownCodes(): void {
+    $this->assertSame(-32000, ErrorCode::getJsonRpcCode('UNKNOWN_CODE'));
+  }
+
+  public function testGetCategoryForReadOnlyMode(): void {
+    $this->assertSame('access', ErrorCode::getCategory(ErrorCode::READ_ONLY_MODE));
+  }
+
+  public function testGetCategoryForMissingDependency(): void {
+    $this->assertSame('resource', ErrorCode::getCategory(ErrorCode::MISSING_DEPENDENCY));
+  }
+
+  public function testGetCategoryForToolErrors(): void {
+    $this->assertSame('operation', ErrorCode::getCategory(ErrorCode::INVALID_TOOL));
+    $this->assertSame('operation', ErrorCode::getCategory(ErrorCode::EXECUTION_FAILED));
+    $this->assertSame('operation', ErrorCode::getCategory(ErrorCode::INSTANTIATION_FAILED));
+  }
+
+  public function testGetHttpStatusForReadOnlyMode(): void {
+    $this->assertSame(403, ErrorCode::getHttpStatus(ErrorCode::READ_ONLY_MODE));
+  }
+
+  public function testGetHttpStatusForMissingDependency(): void {
+    $this->assertSame(500, ErrorCode::getHttpStatus(ErrorCode::MISSING_DEPENDENCY));
+  }
+
+  public function testGetHttpStatusForInvalidTool(): void {
+    $this->assertSame(400, ErrorCode::getHttpStatus(ErrorCode::INVALID_TOOL));
+  }
+
+  public function testGetHttpStatusForExecutionFailed(): void {
+    $this->assertSame(500, ErrorCode::getHttpStatus(ErrorCode::EXECUTION_FAILED));
+  }
+
+  public function testGetHttpStatusForInstantiationFailed(): void {
+    $this->assertSame(500, ErrorCode::getHttpStatus(ErrorCode::INSTANTIATION_FAILED));
+  }
+
 }
