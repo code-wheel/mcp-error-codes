@@ -24,6 +24,8 @@ namespace CodeWheel\McpErrorCodes;
  *     return $errors->toCallToolResult();
  * }
  * ```
+ *
+ * @implements \IteratorAggregate<int, McpError>
  */
 final class ErrorBag implements \Countable, \IteratorAggregate
 {
@@ -285,6 +287,7 @@ final class ErrorBag implements \Countable, \IteratorAggregate
         unset($data['success'], $data['error']);
 
         return new \Mcp\Schema\JsonRpc\Error(
+            null, // JSON-RPC request ID (null for notifications/errors)
             $primary->getJsonRpcCode(),
             $this->getSummaryMessage(),
             $data

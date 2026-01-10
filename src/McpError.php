@@ -384,6 +384,7 @@ final class McpError
         unset($data['success'], $data['error']);
 
         return new \Mcp\Schema\JsonRpc\Error(
+            null, // JSON-RPC request ID (null for notifications/errors)
             $this->getJsonRpcCode(),
             $this->getMessage(),
             empty($data) ? null : $data
