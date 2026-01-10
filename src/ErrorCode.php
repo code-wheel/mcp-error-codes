@@ -321,4 +321,72 @@ final class ErrorCode {
     };
   }
 
+  /**
+   * Get JSON-RPC 2.0 error code for an error.
+   *
+   * JSON-RPC standard codes:
+   * - -32700: Parse error
+   * - -32600: Invalid Request
+   * - -32601: Method not found
+   * - -32602: Invalid params
+   * - -32603: Internal error
+   * - -32000 to -32099: Server-defined errors
+   *
+   * @param string $code
+   *   The error code.
+   *
+   * @return int
+   *   JSON-RPC error code.
+   */
+  public static function getJsonRpcCode(string $code): int {
+    return match ($code) {
+      // Map to standard JSON-RPC codes where applicable
+      self::VALIDATION_ERROR,
+      self::INVALID_NAME,
+      self::INVALID_FILE_TYPE,
+      self::MISSING_REQUIRED => -32602, // Invalid params
+
+      self::INVALID_TOOL => -32601, // Method not found
+
+      self::INTERNAL_ERROR,
+      self::EXECUTION_FAILED,
+      self::INSTANTIATION_FAILED => -32603, // Internal error
+
+      // Server-defined errors (-32000 to -32099)
+      self::ACCESS_DENIED,
+      self::INSUFFICIENT_SCOPE,
+      self::ADMIN_REQUIRED => -32001, // Access denied
+
+      self::NOT_FOUND,
+      self::TEMPLATE_NOT_FOUND => -32002, // Not found
+
+      self::RATE_LIMIT_EXCEEDED => -32003, // Rate limited
+
+      self::READ_ONLY_MODE => -32004, // Read-only
+
+      self::ALREADY_EXISTS,
+      self::ENTITY_IN_USE,
+      self::ENTITY_PROTECTED => -32005, // Conflict
+
+      self::MISSING_DEPENDENCY => -32006, // Missing dependency
+
+      self::TIMEOUT => -32007, // Timeout
+
+      self::SERVICE_UNAVAILABLE => -32008, // Service unavailable
+
+      self::PAYLOAD_TOO_LARGE => -32009, // Payload too large
+
+      self::CONFIRMATION_REQUIRED => -32010, // Confirmation required
+
+      self::OPERATION_FAILED,
+      self::CRON_FAILED,
+      self::MIGRATION_FAILED,
+      self::RECIPE_FAILED,
+      self::CONFIG_ERROR,
+      self::MEDIA_ERROR => -32011, // Operation failed
+
+      default => -32000, // Generic server error
+    };
+  }
+
 }
